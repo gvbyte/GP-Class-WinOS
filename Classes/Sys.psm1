@@ -1,11 +1,11 @@
 using module .\Log.psm1
-class System {
+class Sys {
     # Get uptime from (Server)
     static [string] GetUptime([string] $Server) {
          # Gather wmi info
         try{
             # Get Processes
-            $wmi_info = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $Server
+            $wmi_info = Get-WmiObject -Class Win32_OperatingSys -ComputerName $Server
             # Get uptime
             $uptime = $wmi_info.ConvertToDateTime($wmi_info.LastBootUpTime)
             $uptimeDays = (Get-Date) - $uptime
@@ -38,7 +38,7 @@ class System {
     static [System.Object] GetRAMUtilization([string] $Server) {
         $RAM = try {
             Invoke-Command -ComputerName $Server -ErrorAction Stop -ScriptBlock {
-                $os = Get-WmiObject -Class Win32_OperatingSystem
+                $os = Get-WmiObject -Class Win32_OperatingSys
                 if($os.TotalVisibleMemorySize -eq 0){throw;}
                 $total_ram = $os.TotalVisibleMemorySize
                 $free_ram = $os.FreePhysicalMemory
@@ -66,7 +66,7 @@ class System {
     }
     # Function to get Total Processes
     static [string] GetProcesses([string] $Server) {
-        $total_processes = (Get-WmiObject -Class Win32_OperatingSystem -ComputerName $Server).NumberOfProcesses;
+        $total_processes = (Get-WmiObject -Class Win32_OperatingSys -ComputerName $Server).NumberOfProcesses;
         if(!($total_processes)){$total_processes = "N/A"};
         return $total_processes;
     }
@@ -78,7 +78,7 @@ class System {
             $lastKB = $kb_table | select -First 1;
             if(!($lastKB)){$lastKB = "N/A"};
             # RAM
-            $RAM      = [System]::GetRAMUtilization([string] $Server);
+            $RAM      = [Sys]::GetRAMUtilization([string] $Server);
             $RAMTotal = [System.Math]::Round($($RAM.RAMTotal / 2048),2)
             $RAMFree  = $RAM.RAMFree / 1024
             $RAMUsed  = $RAM.RAMUsed / 1024
@@ -86,16 +86,16 @@ class System {
             
             $Server_overview = [PSCustomObject]@{
                 Server             = $Server
-                Uptime             = [System]::GetUptime([string] $Server);
-                CPUUtil            = "$([System]::GetCPUUtilization([string] $Server))%";
+                Uptime             = [Sys]::GetUptime([string] $Server);
+                CPUUtil            = "$([Sys]::GetCPUUtilization([string] $Server))%";
                 RAMUtil            = "$RAMUtil%"
                 RAMTotal           = "$RAMTotal GB"
                 RAMFree            = "$RAMFree GB"
                 RAMUsed            = "$RAMUsed GB"
-                Processes          = [System]::GetProcesses([string] $Server);
+                Processes          = [Sys]::GetProcesses([string] $Server);
                 ApplicationLogs    = [Log]::GetApplicationCount($Server);
                 SecurityLogs       = ""
-                SystemLogs         = ""
+                SysLogs         = ""
                 LastKB             = "$($lastKB.HotFixID) - $($lastKB.InstalledOn)";
                 KBTable            = $kb_table
             } 

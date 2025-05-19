@@ -1,1 +1,2 @@
-using module .\System.psm1
+using module .\Sys.psm1
+using module .\Paths.psm1

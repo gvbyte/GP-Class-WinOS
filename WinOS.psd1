@@ -5,5 +5,5 @@
     Author            = 'GVBYTE'
     Description       = 'GVBYTE custom WinOS classes and functions'
     PowerShellVersion = '5.1'
-    FunctionsToExport = @('Get-WinOSInfo','Get-WinOSInfoPrompt')
+    FunctionsToExport = @('Get-WinOSInfo','Get-WinOSInfoPrompt', 'Find-PathInHome')
 }
