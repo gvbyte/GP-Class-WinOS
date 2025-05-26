@@ -47,9 +47,9 @@ class Sys {
                 $ram_utilization = [math]::Round($ram_utilization, 2)
                 if(!($ram_utilization)){$ram_utilization = "N/A"}
                 return [PSCustomObject]@{
-                    RAMTotal = $total_ram
-                    RAMFree  = $free_ram
-                    RAMUsed  = $used_ram
+                    RAMTotal = [System.Math]::Round($($total_ram / 2048),2)
+                    RAMFree  = $free_ram / 1024
+                    RAMUsed  = $used_ram / 1024
                     RAMUtil  = $ram_utilization
                 }
             }
@@ -79,9 +79,9 @@ class Sys {
             if(!($lastKB)){$lastKB = "N/A"};
             # RAM
             $RAM      = [Sys]::GetRAMUtilization([string] $Server);
-            $RAMTotal = [System.Math]::Round($($RAM.RAMTotal / 2048),2)
-            $RAMFree  = $RAM.RAMFree / 1024
-            $RAMUsed  = $RAM.RAMUsed / 1024
+            $RAMTotal = $RAM.RAMTotal
+            $RAMFree  = $RAM.RAMFree
+            $RAMUsed  = $RAM.RAMUsed
             $RAMUtil  = $RAM.RAMUtil 
             
             $Server_overview = [PSCustomObject]@{
